@@ -1,0 +1,15 @@
+export enum APP_THEME {
+  LIGHT = 'light',
+  DARK = 'dark',
+  SYSTEM = 'system',
+}
+
+export const RESIZE_MODE = {
+  NO_RESIZE: 'NO_RESIZE',
+  DIMENSIONS: 'DIMENSIONS',
+  PERCENTAGE: 'PERCENTAGE',
+  SHORT_EDGE: 'SHORT_EDGE',
+  LONG_EDGE: 'LONG_EDGE',
+  FIXED_WIDTH: 'FIXED_WIDTH',
+  FIXED_HEIGHT: 'FIXED_HEIGHT',
+} as const

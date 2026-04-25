@@ -1,0 +1,15 @@
+{
+  "title": {
+    "input_hint": "输入标题文字",
+    "line_placeholder": ["第一行：标题（大字）", "内容行", "内容行", "第四行：结尾（小字，选填）"],
+    "width": "图片宽度",
+    "text_color": "文字颜色",
+    "bg_color": "背景颜色",
+    "generate": "生成图片",
+    "generating": "生成中...",
+    "reset": "重置",
+    "preview": "预览",
+    "download": "下载",
+    "font_size": "字号"
+  }
+}
