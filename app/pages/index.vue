@@ -167,6 +167,15 @@ function handleKeydown(e: KeyboardEvent, index: number) {
           下载
         </button>
       </div>
+      <!-- 显示实际使用的字号 -->
+      <div v-if="titleStore.generatedFontSizes" class="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">当前字号（供参考）</p>
+        <div class="flex flex-wrap gap-2">
+          <span v-for="(size, key) in titleStore.generatedFontSizes" :key="key" class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
+            {{ key }}: {{ size }}px
+          </span>
+        </div>
+      </div>
       <div class="text-center">
         <img
           :src="titleStore.generatedImage"
