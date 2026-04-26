@@ -4,22 +4,12 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/i18n',
   ],
   vite: {
     plugins: [tailwindcss()],
   },
   css: ['~/app/assets/css/main.css'],
   compatibilityDate: '2024-10-08',
-  i18n: {
-    locales: [
-      { code: 'zh-CN', name: '中文' },
-      { code: 'en-US', name: 'English' },
-    ],
-    defaultLocale: 'zh-CN',
-    langDir: 'i18n/locales',
-    strategy: 'no_prefix',
-  },
   nitro: {
     prerender: {
       crawlLinks: false,
