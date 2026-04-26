@@ -40,14 +40,17 @@ export const useTitleStore = defineStore('title', {
     
     setWidth(width: number) {
       this.width = width
+      this.generatedImage = null
     },
     
     setTextColor(color: [number, number, number]) {
       this.textColor = color
+      this.generatedImage = null
     },
     
     setBgColor(color: [number, number, number]) {
       this.bgColor = color
+      this.generatedImage = null
     },
     
     setFormat(format: 'url' | 'base64' | 'image') {
