@@ -174,8 +174,17 @@ function handleKeydown(e: KeyboardEvent, index: number) {
       <div v-if="titleStore.generatedFontSizes" class="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
         <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">当前字号（供参考）</p>
         <div class="flex flex-wrap gap-2">
-          <span v-for="(size, key) in titleStore.generatedFontSizes" :key="key" class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
-            {{ key }}: {{ size }}px
+          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
+            第一行: {{ titleStore.generatedFontSizes.line1_size || titleStore.generatedFontSizes.main_size || '?' }}px
+          </span>
+          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
+            第二行: {{ titleStore.generatedFontSizes.line2_size || '?' }}px
+          </span>
+          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
+            第三行: {{ titleStore.generatedFontSizes.line3_size || '?' }}px
+          </span>
+          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
+            第四行: {{ titleStore.generatedFontSizes.end_line_size || '?' }}px
           </span>
         </div>
       </div>
