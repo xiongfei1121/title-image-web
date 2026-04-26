@@ -10,7 +10,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-10-08',
   nitro: {
     prerender: {
-      routes: ['/'],
+      crawlLinks: false,
+      routes: [],
     },
   },
   runtimeConfig: {
