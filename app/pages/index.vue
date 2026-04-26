@@ -3,7 +3,7 @@ import { Download, RefreshCw, Trash2 } from 'lucide-vue-next'
 import { useTitleStore } from '~/stores/title'
 
 const titleStore = useTitleStore()
-const { t } = useI18n()
+// i18n disabled
 
 // Color input helpers
 function getTextColorHex() {
