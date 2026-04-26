@@ -6,11 +6,10 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/i18n',
   ],
-  srcDir: 'app',
   vite: {
     plugins: [tailwindcss()],
   },
-  css: ['~/assets/css/main.css'],
+  css: ['~/app/assets/css/main.css'],
   compatibilityDate: '2024-10-08',
   i18n: {
     locales: [
