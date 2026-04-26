@@ -30,6 +30,7 @@ export const useTitleStore = defineStore('title', {
       if (index < this.lines.length) {
         this.lines[index].text = text
         this.generatedImage = null
+        this.generatedFontSizes = null
       }
     },
     
@@ -37,22 +38,26 @@ export const useTitleStore = defineStore('title', {
       if (index < this.lines.length) {
         this.lines[index].fontSize = fontSize
         this.generatedImage = null
+        this.generatedFontSizes = null
       }
     },
     
     setWidth(width: number) {
       this.width = width
       this.generatedImage = null
+      this.generatedFontSizes = null
     },
     
     setTextColor(color: [number, number, number]) {
       this.textColor = color
       this.generatedImage = null
+      this.generatedFontSizes = null
     },
     
     setBgColor(color: [number, number, number]) {
       this.bgColor = color
       this.generatedImage = null
+      this.generatedFontSizes = null
     },
     
     setFormat(format: 'url' | 'base64' | 'image') {
