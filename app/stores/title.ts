@@ -9,16 +9,17 @@ interface LineConfig {
 export const useTitleStore = defineStore('title', {
   state: () => ({
     lines: [
-      { text: '', fontSize: 80 } as LineConfig,
-      { text: '', fontSize: 100 } as LineConfig,
-      { text: '', fontSize: 100 } as LineConfig,
-      { text: '', fontSize: 60 } as LineConfig,
+      { text: '', fontSize: undefined } as LineConfig,
+      { text: '', fontSize: undefined } as LineConfig,
+      { text: '', fontSize: undefined } as LineConfig,
+      { text: '', fontSize: undefined } as LineConfig,
     ] as LineConfig[],
     width: 1453,
     textColor: [42, 76, 140] as [number, number, number],
     bgColor: [255, 255, 255] as [number, number, number],
     format: 'url' as 'url' | 'base64' | 'image',
     generatedImage: null as string | null,
+    generatedFontSizes: null as Record<string, number> | null,
     loading: false,
     error: null as string | null,
     appTheme: APP_THEME.SYSTEM,
@@ -105,6 +106,10 @@ export const useTitleStore = defineStore('title', {
         
         if (data.success) {
           this.generatedImage = data.url
+          // Store actual font sizes used in the generated image
+          if (data.font_sizes) {
+            this.generatedFontSizes = data.font_sizes
+          }
         } else {
           this.error = data.error || '生成失败'
         }
@@ -122,18 +127,18 @@ export const useTitleStore = defineStore('title', {
     
     reset() {
       this.lines = [
-        { text: '', fontSize: 80 },
-        { text: '', fontSize: 100 },
-        { text: '', fontSize: 100 },
-        { text: '', fontSize: 60 },
+        { text: '', fontSize: undefined },
+        { text: '', fontSize: undefined },
+        { text: '', fontSize: undefined },
+        { text: '', fontSize: undefined },
       ]
       this.width = 1453
       this.textColor = [42, 76, 140]
       this.bgColor = [255, 255, 255]
       this.generatedImage = null
+      this.generatedFontSizes = null
       this.error = null
     },
-  },
   
   persist: {
     pick: ['width', 'textColor', 'bgColor', 'appTheme'],
