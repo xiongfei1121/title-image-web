@@ -144,6 +144,7 @@ export const useTitleStore = defineStore('title', {
       this.generatedFontSizes = null
       this.error = null
     },
+  },
   
   persist: {
     pick: ['width', 'textColor', 'bgColor', 'appTheme'],
