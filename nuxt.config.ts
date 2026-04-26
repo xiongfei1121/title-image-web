@@ -18,14 +18,12 @@ export default defineNuxtConfig({
       { code: 'en-US', name: 'English' },
     ],
     defaultLocale: 'zh-CN',
-    lazy: true,
     langDir: 'i18n/locales',
     strategy: 'no_prefix',
   },
   nitro: {
     prerender: {
       crawlLinks: false,
-      routes: [],
     },
   },
   runtimeConfig: {
