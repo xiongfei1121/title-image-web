@@ -5,10 +5,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
+  srcDir: 'app',
   vite: {
     plugins: [tailwindcss()],
   },
-  css: ['~/app/assets/css/main.css'],
+  css: ['~/assets/css/main.css'],
   compatibilityDate: '2024-10-08',
   nitro: {
     prerender: {
