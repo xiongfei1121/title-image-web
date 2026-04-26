@@ -1,13 +1,27 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
-  modules: ['@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt'],
+  modules: [
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+    '@nuxtjs/i18n',
+  ],
   srcDir: 'app',
   vite: {
     plugins: [tailwindcss()],
   },
   css: ['~/assets/css/main.css'],
   compatibilityDate: '2024-10-08',
+  i18n: {
+    locales: [
+      { code: 'zh-CN', name: '中文' },
+      { code: 'en-US', name: 'English' },
+    ],
+    defaultLocale: 'zh-CN',
+    lazy: true,
+    langDir: 'locales',
+    strategy: 'no_prefix',
+  },
   nitro: {
     prerender: {
       crawlLinks: false,
