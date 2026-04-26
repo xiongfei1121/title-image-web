@@ -32,9 +32,20 @@ function onBgColorChange(e: Event) {
   titleStore.setBgColor([r, g, b])
 }
 
-function downloadImage() {
+async function downloadImage() {
   if (!titleStore.generatedImage) return
-  window.open(titleStore.generatedImage, '_blank')
+  const img = titleStore.generatedImage
+  const response = await fetch(img)
+  const blob = await response.blob()
+  const url = URL.createObjectURL(blob)
+  
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'title_image.png'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 function handleKeydown(e: KeyboardEvent, index: number) {
