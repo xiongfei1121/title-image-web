@@ -35,6 +35,7 @@ export const useTitleStore = defineStore('title', {
     setLineFontSize(index: number, fontSize: number) {
       if (index < this.lines.length) {
         this.lines[index].fontSize = fontSize
+        this.generatedImage = null
       }
     },
     
