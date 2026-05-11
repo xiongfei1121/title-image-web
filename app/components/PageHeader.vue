@@ -17,7 +17,7 @@ function toggleTheme() {
     <nav class="w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between">
       <div class="flex items-center justify-between">
         <a href="/" class="flex items-center gap-2">
-          <img class="size-10" src="https://img.081213.xyz/%E5%BE%B7%E5%AE%9D/logo.png" alt="logo" />
+          <img class="size-10" src="/images/logo.png" alt="logo" />
           <h2 class="hidden sm:block text-gray-900 dark:text-gray-100 text-lg">
             <span class="font-medium">🐻老熊</span>标题图片生成
           </h2>
