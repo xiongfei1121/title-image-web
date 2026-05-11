@@ -19,7 +19,7 @@ function toggleTheme() {
         <a href="/" class="flex items-center gap-2">
           <img class="size-10" src="/images/logo.png" alt="logo" />
           <h2 class="hidden sm:block text-gray-900 dark:text-gray-100 text-lg">
-            <span class="font-medium">🐻老熊</span>标题图片生成
+            <span class="font-medium">老熊</span>标题图片生成
           </h2>
         </a>
       </div>
