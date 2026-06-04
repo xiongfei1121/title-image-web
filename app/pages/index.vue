@@ -95,7 +95,7 @@ function handleKeydown(e: KeyboardEvent, index: number) {
       </div>
       
       <!-- Settings -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">图片宽度</label>
           <input
@@ -125,7 +125,7 @@ function handleKeydown(e: KeyboardEvent, index: number) {
               type="color"
               :value="getTextColorHex()"
               @input="onTextColorChange"
-              class="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+              class="w-14 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer flex-shrink-0"
             />
             <input
               type="text"
@@ -142,7 +142,7 @@ function handleKeydown(e: KeyboardEvent, index: number) {
               type="color"
               :value="getBgColorHex()"
               @input="onBgColorChange"
-              class="w-12 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+              class="w-14 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer flex-shrink-0"
             />
             <input
               type="text"
