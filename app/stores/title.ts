@@ -15,6 +15,7 @@ export const useTitleStore = defineStore('title', {
       { text: '', fontSize: undefined } as LineConfig,
     ] as LineConfig[],
     width: 1453,
+    lineGap: 15,
     textColor: [42, 76, 140] as [number, number, number],
     bgColor: [255, 255, 255] as [number, number, number],
     format: 'url' as 'url' | 'base64' | 'image',
@@ -44,6 +45,12 @@ export const useTitleStore = defineStore('title', {
     
     setWidth(width: number) {
       this.width = width
+      this.generatedImage = null
+      this.generatedFontSizes = null
+    },
+    
+    setLineGap(lineGap: number) {
+      this.lineGap = lineGap
       this.generatedImage = null
       this.generatedFontSizes = null
     },
@@ -104,6 +111,7 @@ export const useTitleStore = defineStore('title', {
             bg_color: this.bgColor,
             format: 'url',
             custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
+            line_gap: this.lineGap,
           }),
         })
         
@@ -140,6 +148,7 @@ export const useTitleStore = defineStore('title', {
         { text: '', fontSize: undefined },
       ]
       this.width = 1453
+      this.lineGap = 15
       this.textColor = [42, 76, 140]
       this.bgColor = [255, 255, 255]
       this.generatedImage = null
@@ -149,6 +158,6 @@ export const useTitleStore = defineStore('title', {
   },
   
   persist: {
-    pick: ['width', 'textColor', 'bgColor', 'appTheme'],
+    pick: ['width', 'lineGap', 'textColor', 'bgColor', 'appTheme'],
   },
 })
