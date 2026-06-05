@@ -119,7 +119,7 @@ export const useTitleStore = defineStore('title', {
         
         if (data.success) {
           // Fix http -> https
-          const url = data.url.replace(/^http:/, 'https:')
+          const url = data.url.replace(/^http:/, 'https:').replace(/[?&]_t=\d+$/, '') + '?_t=' + Date.now()
           this.generatedImage = url
           // Store actual font sizes used in the generated image
           if (data.font_sizes) {
