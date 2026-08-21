@@ -1,18 +1,23 @@
 import { defineStore } from 'pinia'
 import { APP_THEME } from '~/utils/utils'
 
+export type FontType = 'hei' | 'main'
+
 interface LineConfig {
   text: string
   fontSize?: number
+  font: FontType
+  checked: boolean
 }
 
 export const useTitleStore = defineStore('title', {
   state: () => ({
     lines: [
-      { text: '', fontSize: undefined } as LineConfig,
-      { text: '', fontSize: undefined } as LineConfig,
-      { text: '', fontSize: undefined } as LineConfig,
-      { text: '', fontSize: undefined } as LineConfig,
+      { text: '', fontSize: undefined, font: 'main' as FontType, checked: true },
+      { text: '', fontSize: undefined, font: 'main' as FontType, checked: true },
+      { text: '', fontSize: undefined, font: 'main' as FontType, checked: true },
+      { text: '', fontSize: undefined, font: 'hei' as FontType, checked: true },
+      { text: '', fontSize: undefined, font: 'hei' as FontType, checked: false },
     ] as LineConfig[],
     width: 1453,
     lineGap: 15,
@@ -26,6 +31,20 @@ export const useTitleStore = defineStore('title', {
     appTheme: APP_THEME.SYSTEM,
   }),
   
+  getters: {
+    // 获取勾选的行
+    checkedLines: (state) => {
+      return state.lines.filter(line => line.checked && line.text.trim())
+    },
+    // 获取勾选行的索引（用于构建fonts和custom_sizes）
+    checkedLineIndices: (state) => {
+      return state.lines
+        .map((line, index) => ({ index, line }))
+        .filter(item => item.line.checked && item.line.text.trim())
+        .map(item => item.index)
+    },
+  },
+  
   actions: {
     setLineText(index: number, text: string) {
       if (index < this.lines.length) {
@@ -38,6 +57,22 @@ export const useTitleStore = defineStore('title', {
     setLineFontSize(index: number, fontSize: number) {
       if (index < this.lines.length) {
         this.lines[index].fontSize = fontSize
+        this.generatedImage = null
+        this.generatedFontSizes = null
+      }
+    },
+    
+    setLineFont(index: number, font: FontType) {
+      if (index < this.lines.length) {
+        this.lines[index].font = font
+        this.generatedImage = null
+        this.generatedFontSizes = null
+      }
+    },
+    
+    toggleLineChecked(index: number) {
+      if (index < this.lines.length) {
+        this.lines[index].checked = !this.lines[index].checked
         this.generatedImage = null
         this.generatedFontSizes = null
       }
@@ -75,37 +110,43 @@ export const useTitleStore = defineStore('title', {
       const config = useRuntimeConfig()
       const apiBase = config.public.apiBase
       
-      // 获取有效行（去掉空行）
-      const validLines = this.lines
-        .slice(0, 4)
-        .filter(line => line.text.trim())
+      // 获取勾选的行
+      const checkedLines = this.lines
+        .filter(line => line.checked && line.text.trim())
         .map(line => line.text.trim())
       
-      if (validLines.length < 2) {
-        this.error = '至少需要2行有效文字'
+      if (checkedLines.length < 2) {
+        this.error = '请至少勾选2行有效文字'
         return
       }
+      
+      // 构建字体列表（按勾选行的顺序）
+      const fonts: FontType[] = []
+      const customSizes: Record<string, number> = {}
+      let outputIndex = 1
+      
+      this.lines.forEach((line, index) => {
+        if (line.checked && line.text.trim()) {
+          fonts.push(line.font)
+          if (line.fontSize) {
+            customSizes[`line${outputIndex}`] = line.fontSize
+          }
+          outputIndex++
+        }
+      })
       
       this.loading = true
       this.error = null
       
       try {
-        // 构建自定义字号
-        const customSizes: Record<string, number> = {}
-        validLines.forEach((_, index) => {
-          const fontSize = this.lines[index].fontSize
-          if (fontSize) {
-            customSizes[`line${index + 1}`] = fontSize
-          }
-        })
-        
         const response = await fetch(`${apiBase}/generate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            lines: validLines,
+            lines: checkedLines,
+            fonts: fonts,
             width: this.width,
             text_color: this.textColor,
             bg_color: this.bgColor,
@@ -142,10 +183,11 @@ export const useTitleStore = defineStore('title', {
     
     reset() {
       this.lines = [
-        { text: '', fontSize: undefined },
-        { text: '', fontSize: undefined },
-        { text: '', fontSize: undefined },
-        { text: '', fontSize: undefined },
+        { text: '', fontSize: undefined, font: 'main', checked: true },
+        { text: '', fontSize: undefined, font: 'main', checked: true },
+        { text: '', fontSize: undefined, font: 'main', checked: true },
+        { text: '', fontSize: undefined, font: 'hei', checked: true },
+        { text: '', fontSize: undefined, font: 'hei', checked: false },
       ]
       this.width = 1453
       this.lineGap = 15
@@ -158,6 +200,6 @@ export const useTitleStore = defineStore('title', {
   },
   
   persist: {
-    pick: ['width', 'lineGap', 'textColor', 'bgColor', 'appTheme'],
+    pick: ['width', 'lineGap', 'textColor', 'bgColor', 'appTheme', 'lines'],
   },
 })

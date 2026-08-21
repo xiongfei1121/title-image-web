@@ -3,7 +3,11 @@ import { Download, RefreshCw, Trash2 } from 'lucide-vue-next'
 import { useTitleStore } from '~/stores/title'
 
 const titleStore = useTitleStore()
-// i18n disabled
+
+const fontLabels = {
+  main: '兰亭特黑',
+  hei: '方正黑体',
+}
 
 // Color input helpers
 function getTextColorHex() {
@@ -50,36 +54,77 @@ async function downloadImage() {
 
 function handleKeydown(e: KeyboardEvent, index: number) {
   if (e.key === 'Enter' && index < titleStore.lines.length - 1) {
-    // Focus next line input
     const inputs = document.querySelectorAll('.line-input') as NodeListOf<HTMLInputElement>
     const nextInput = inputs[index + 1]
     if (nextInput) nextInput.focus()
   }
 }
+
+const linePlaceholders = [
+  '第一行：标题（大字）',
+  '第二行：主内容',
+  '第三行：主内容',
+  '第四行：内容或结尾',
+  '第五行：结尾（选填）',
+]
 </script>
 
 <template>
-  <div class="container max-w-4xl mx-auto px-4 py-8">
+  <div class="container max-w-5xl mx-auto px-4 py-8">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
       <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">输入标题文字</h1>
       
       <!-- Line inputs -->
-      <div class="space-y-4 mb-6">
-        <div v-for="(line, index) in titleStore.lines.slice(0, 4)" :key="index" class="flex gap-4 items-start">
-          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
+      <div class="space-y-3 mb-6">
+        <div
+          v-for="(line, index) in titleStore.lines"
+          :key="index"
+          class="flex gap-3 items-start"
+          :class="{ 'opacity-50': !line.checked }"
+        >
+          <!-- Checkbox -->
+          <div class="flex-shrink-0 pt-3">
+            <input
+              type="checkbox"
+              v-model="line.checked"
+              class="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+              @change="titleStore.clearImage()"
+            />
+          </div>
+          
+          <!-- Line number -->
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm mt-1">
             {{ index + 1 }}
           </div>
+          
+          <!-- Text input -->
           <div class="flex-1">
             <input
               v-model="titleStore.lines[index].text"
               type="text"
-              :placeholder="index === 0 ? '第一行：标题（大字）' : index === 3 ? '第四行：结尾（小字，选填）' : '内容行'"
-              class="line-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :placeholder="linePlaceholders[index]"
+              class="line-input w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :disabled="!line.checked"
               @keydown="handleKeydown($event, index)"
               @input="titleStore.clearImage()"
             />
           </div>
-          <div class="flex-shrink-0 w-32">
+          
+          <!-- Font selector -->
+          <div class="flex-shrink-0 w-28">
+            <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">字体</label>
+            <select
+              v-model="titleStore.lines[index].font"
+              class="w-full px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
+              @change="titleStore.clearImage()"
+            >
+              <option value="main">兰亭特黑</option>
+              <option value="hei">方正黑体</option>
+            </select>
+          </div>
+          
+          <!-- Font size -->
+          <div class="flex-shrink-0 w-24">
             <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">字号</label>
             <input
               type="number"
@@ -95,7 +140,7 @@ function handleKeydown(e: KeyboardEvent, index: number) {
       </div>
       
       <!-- Settings -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 max-w-4xl mx-auto">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">图片宽度</label>
           <input
@@ -103,7 +148,7 @@ function handleKeydown(e: KeyboardEvent, index: number) {
             v-model.number="titleStore.width"
             min="500"
             max="3000"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            class="w-full max-w-[140px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
             @change="titleStore.clearImage()"
           />
         </div>
@@ -114,7 +159,7 @@ function handleKeydown(e: KeyboardEvent, index: number) {
             v-model.number="titleStore.lineGap"
             min="0"
             max="200"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            class="w-full max-w-[140px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
             @change="titleStore.clearImage()"
           />
         </div>
@@ -125,13 +170,13 @@ function handleKeydown(e: KeyboardEvent, index: number) {
               type="color"
               :value="getTextColorHex()"
               @input="onTextColorChange"
-              class="w-14 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer flex-shrink-0"
+              class="w-10 h-9 rounded border border-gray-300 dark:border-gray-600 cursor-pointer flex-shrink-0"
             />
             <input
               type="text"
               :value="getTextColorHex()"
               @change="onTextColorChange"
-              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono text-sm"
+              class="w-full max-w-[90px] px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono text-sm"
             />
           </div>
         </div>
@@ -142,13 +187,13 @@ function handleKeydown(e: KeyboardEvent, index: number) {
               type="color"
               :value="getBgColorHex()"
               @input="onBgColorChange"
-              class="w-14 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer flex-shrink-0"
+              class="w-10 h-9 rounded border border-gray-300 dark:border-gray-600 cursor-pointer flex-shrink-0"
             />
             <input
               type="text"
               :value="getBgColorHex()"
               @change="onBgColorChange"
-              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono text-sm"
+              class="w-full max-w-[90px] px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono text-sm"
             />
           </div>
         </div>
@@ -196,17 +241,12 @@ function handleKeydown(e: KeyboardEvent, index: number) {
       <div v-if="titleStore.generatedFontSizes" class="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
         <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">当前字号（供参考）</p>
         <div class="flex flex-wrap gap-2">
-          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
-            第一行: {{ titleStore.generatedFontSizes.line1_size || titleStore.generatedFontSizes.main_size || '?' }}px
-          </span>
-          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
-            第二行: {{ titleStore.generatedFontSizes.line2_size || '?' }}px
-          </span>
-          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
-            第三行: {{ titleStore.generatedFontSizes.line3_size || '?' }}px
-          </span>
-          <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded">
-            第四行: {{ titleStore.generatedFontSizes.end_line_size || '?' }}px
+          <span
+            v-for="(value, key) in titleStore.generatedFontSizes"
+            :key="key"
+            class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded"
+          >
+            {{ key.replace('_size', '') }}: {{ value }}px
           </span>
         </div>
       </div>
