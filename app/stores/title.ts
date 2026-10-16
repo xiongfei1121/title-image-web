@@ -217,8 +217,12 @@ format: 'url',
 const data = await response.json()
         
         if (data.success) {
-          // Fix http -> https
-          const url = data.url.replace(/^http:/, 'https:').replace(/[?&]_t=\d+$/, '') + '?_t=' + Date.now()
+          // 仅当页面本身为 https 时才升级为 https，避免混合内容；本地 http 调试保持原协议
+          const upgraded =
+            typeof window !== 'undefined' && window.location.protocol === 'https:'
+              ? data.url.replace(/^http:/, 'https:')
+              : data.url
+          const url = upgraded.replace(/[?&]_t=\d+$/, '') + '?_t=' + Date.now()
           this.generatedImage = url
           // Store actual font sizes used in the generated image
           if (data.font_sizes) {
