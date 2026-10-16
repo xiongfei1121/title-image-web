@@ -94,84 +94,79 @@ const linePlaceholders = [
           class="rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           :class="{ 'opacity-40': !line.checked }"
         >
-          <!-- 第一排：勾选 + 行号 + 文字 -->
-          <div class="flex gap-3 items-center">
-            <div class="flex-shrink-0">
-              <input
-                type="checkbox"
-                v-model="line.checked"
-                class="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
-                @change="titleStore.clearImage()"
-              />
-            </div>
-            
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
+          <!-- 单排：勾选 + 行号 + 文字 + 字体/字号/拉伸（紧凑同行） -->
+          <div class="flex flex-wrap items-center gap-2">
+            <input
+              type="checkbox"
+              v-model="line.checked"
+              class="w-5 h-5 flex-shrink-0 text-blue-500 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+              @change="titleStore.clearImage()"
+            />
+
+            <div class="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs">
               {{ index + 1 }}
             </div>
-            
+
             <input
               v-model="titleStore.lines[index].text"
               type="text"
               :placeholder="linePlaceholders[index]"
-              class="line-input flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="line-input flex-1 min-w-[160px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               :disabled="!line.checked"
               @keydown="handleKeydown($event, index)"
               @input="titleStore.clearImage()"
             />
-          </div>
-          
-          <!-- 第二排：字体 / 字号 / 横向拉伸 / 纵向拉伸 -->
-          <div class="mt-2 ml-11 grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-2xl">
-            <div>
-              <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">字体</label>
+
+            <label class="flex flex-shrink-0 items-center gap-1 text-xs text-gray-500 dark:text-gray-400" title="字体">
+              字体
               <select
                 v-model="titleStore.lines[index].font"
-                class="w-full px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
+                class="w-24 px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
                 @change="titleStore.clearImage()"
               >
                 <option value="main">兰亭特黑</option>
                 <option value="hei">方正黑体</option>
               </select>
-            </div>
-            
-            <div>
-              <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">字号</label>
+            </label>
+
+            <label class="flex flex-shrink-0 items-center gap-1 text-xs text-gray-500 dark:text-gray-400" title="字号（留空为自动）">
+              字号
               <input
                 type="number"
                 v-model.number="titleStore.lines[index].fontSize"
                 min="20"
                 max="200"
                 placeholder="自动"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
+                class="w-16 px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
                 @input="titleStore.clearImage()"
               />
-            </div>
-            
-            <div>
-              <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">横向拉伸</label>
+            </label>
+
+            <label class="flex flex-shrink-0 items-center gap-1 text-xs text-gray-500 dark:text-gray-400" title="横向拉伸（>1 变宽变扁，<1 变窄变高）">
+              横向
               <input
                 type="number"
                 v-model.number="titleStore.lines[index].scaleX"
                 min="0.3"
                 max="3"
                 step="0.1"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
+                class="w-16 px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
                 @change="onScaleChange(index, 'x')"
               />
-            </div>
-            
-            <div>
-              <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">纵向拉伸</label>
+            </label>
+
+            <label class="flex flex-shrink-0 items-center gap-1 text-xs text-gray-500 dark:text-gray-400" title="纵向拉伸（>1 变高变窄，<1 变矮变宽）">
+              纵向
               <input
                 type="number"
                 v-model.number="titleStore.lines[index].scaleY"
                 min="0.3"
                 max="3"
                 step="0.1"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
+                class="w-16 px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-sm"
                 @change="onScaleChange(index, 'y')"
               />
-            </div>
+            </label>
           </div>
         </div>
       </div>
