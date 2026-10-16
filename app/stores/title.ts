@@ -8,26 +8,52 @@ interface LineConfig {
   fontSize?: number
   font: FontType
   checked: boolean
+  scaleX: number
+  scaleY: number
+}
+
+// 拉伸系数范围（与后端 SCALE_MIN/SCALE_MAX 保持一致）
+export const SCALE_MIN = 0.3
+export const SCALE_MAX = 3
+
+// 行间距范围（与后端 LINE_GAP_MIN/LINE_GAP_MAX 保持一致）
+export const LINE_GAP_MIN = -200
+export const LINE_GAP_MAX = 500
+export const LINE_GAP_DEFAULT = 45
+
+export function clampScale(value: unknown): number {
+  const n = Number(value)
+  if (!Number.isFinite(n) || n <= 0) return 1
+  return Math.min(Math.max(n, SCALE_MIN), SCALE_MAX)
+}
+
+export function clampLineGap(value: unknown): number {
+  const n = Number(value)
+  if (!Number.isFinite(n)) return LINE_GAP_DEFAULT
+  return Math.min(Math.max(n, LINE_GAP_MIN), LINE_GAP_MAX)
+}
+
+function createLine(font: FontType, checked: boolean): LineConfig {
+  return { text: '', fontSize: undefined, font, checked, scaleX: 1, scaleY: 1 }
 }
 
 export const useTitleStore = defineStore('title', {
   state: () => ({
     lines: [
-      { text: '', fontSize: undefined, font: 'main' as FontType, checked: true },
-      { text: '', fontSize: undefined, font: 'main' as FontType, checked: true },
-      { text: '', fontSize: undefined, font: 'main' as FontType, checked: true },
-      { text: '', fontSize: undefined, font: 'hei' as FontType, checked: true },
-      { text: '', fontSize: undefined, font: 'hei' as FontType, checked: false },
+      createLine('main', true),
+      createLine('main', true),
+      createLine('main', true),
+      createLine('hei', true),
+      createLine('hei', false),
     ] as LineConfig[],
-width: 1453,
-    lineGap: 15,
-    scaleX: 1,
-    scaleY: 1,
+    width: 1453,
+    lineGap: LINE_GAP_DEFAULT,
     textColor: [42, 76, 140] as [number, number, number],
     bgColor: [255, 255, 255] as [number, number, number],
     format: 'url' as 'url' | 'base64' | 'image',
     generatedImage: null as string | null,
     generatedFontSizes: null as Record<string, number> | null,
+    generatedMeta: null as { width: number; height: number; lineGap: number | null } | null,
     loading: false,
     error: null as string | null,
     appTheme: APP_THEME.SYSTEM,
@@ -72,12 +98,34 @@ width: 1453,
       }
     },
     
-    toggleLineChecked(index: number) {
+toggleLineChecked(index: number) {
       if (index < this.lines.length) {
         this.lines[index].checked = !this.lines[index].checked
         this.generatedImage = null
         this.generatedFontSizes = null
       }
+    },
+
+    setLineScale(index: number, axis: 'x' | 'y', value: number | string) {
+      if (index < this.lines.length) {
+        const v = clampScale(value)
+        if (axis === 'x') this.lines[index].scaleX = v
+        else this.lines[index].scaleY = v
+        this.generatedImage = null
+        this.generatedFontSizes = null
+      }
+    },
+
+    // 兼容旧版本 localStorage：补齐每行缺失的字段（checked/font/scaleX/scaleY）
+    ensureLineDefaults() {
+      this.lines.forEach((line) => {
+        if (line.checked === undefined) line.checked = true
+        if (line.font !== 'hei' && line.font !== 'main') line.font = 'main'
+        line.scaleX = clampScale(line.scaleX)
+        line.scaleY = clampScale(line.scaleY)
+      })
+      this.lineGap = clampLineGap(this.lineGap)
+      if (!this.width || !Number.isFinite(Number(this.width))) this.width = 1453
     },
     
     setWidth(width: number) {
@@ -92,17 +140,7 @@ width: 1453,
       this.generatedFontSizes = null
     },
     
-    setScaleX(scaleX: number) {
-      this.scaleX = scaleX
-      this.generatedImage = null
-      this.generatedFontSizes = null
-    },
     
-    setScaleY(scaleY: number) {
-      this.scaleY = scaleY
-      this.generatedImage = null
-      this.generatedFontSizes = null
-    },
     
     setTextColor(color: [number, number, number]) {
       this.textColor = color
@@ -134,17 +172,21 @@ width: 1453,
         return
       }
       
-      // 构建字体列表（按勾选行的顺序）
+// 构建字体/字号/拉伸列表（按勾选行的输出顺序，与后端逐行一一对应）
       const fonts: FontType[] = []
       const customSizes: Record<string, number> = {}
+      const scaleXs: number[] = []
+      const scaleYs: number[] = []
       let outputIndex = 1
       
-      this.lines.forEach((line, index) => {
+      this.lines.forEach((line) => {
         if (line.checked && line.text.trim()) {
           fonts.push(line.font)
           if (line.fontSize) {
             customSizes[`line${outputIndex}`] = line.fontSize
           }
+          scaleXs.push(clampScale(line.scaleX))
+          scaleYs.push(clampScale(line.scaleY))
           outputIndex++
         }
       })
@@ -164,15 +206,15 @@ width: 1453,
             width: this.width,
             text_color: this.textColor,
             bg_color: this.bgColor,
-            format: 'url',
-custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
-            line_gap: this.lineGap,
-            scale_x: this.scaleX,
-            scale_y: this.scaleY,
+format: 'url',
+            custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
+            line_gap: clampLineGap(this.lineGap),
+            scale_x: scaleXs,
+            scale_y: scaleYs,
           }),
         })
         
-        const data = await response.json()
+const data = await response.json()
         
         if (data.success) {
           // Fix http -> https
@@ -181,6 +223,11 @@ custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
           // Store actual font sizes used in the generated image
           if (data.font_sizes) {
             this.generatedFontSizes = data.font_sizes
+          }
+          this.generatedMeta = {
+            width: data.width,
+            height: data.height,
+            lineGap: typeof data.line_gap === 'number' ? data.line_gap : null,
           }
         } else {
           this.error = data.error || '生成失败'
@@ -197,27 +244,26 @@ custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
       this.error = null
     },
     
-    reset() {
+reset() {
       this.lines = [
-        { text: '', fontSize: undefined, font: 'main', checked: true },
-        { text: '', fontSize: undefined, font: 'main', checked: true },
-        { text: '', fontSize: undefined, font: 'main', checked: true },
-        { text: '', fontSize: undefined, font: 'hei', checked: true },
-        { text: '', fontSize: undefined, font: 'hei', checked: false },
+        createLine('main', true),
+        createLine('main', true),
+        createLine('main', true),
+        createLine('hei', true),
+        createLine('hei', false),
       ]
-this.width = 1453
-      this.lineGap = 15
-      this.scaleX = 1
-      this.scaleY = 1
+      this.width = 1453
+      this.lineGap = LINE_GAP_DEFAULT
       this.textColor = [42, 76, 140]
       this.bgColor = [255, 255, 255]
       this.generatedImage = null
       this.generatedFontSizes = null
+      this.generatedMeta = null
       this.error = null
     },
   },
   
   persist: {
-    pick: ['width', 'lineGap', 'scaleX', 'scaleY', 'textColor', 'bgColor', 'appTheme', 'lines'],
+    pick: ['width', 'lineGap', 'textColor', 'bgColor', 'appTheme', 'lines'],
   },
 })
