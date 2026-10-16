@@ -140,7 +140,7 @@ const linePlaceholders = [
       </div>
       
       <!-- Settings -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 max-w-4xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 max-w-4xl mx-auto">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">图片宽度</label>
           <input
@@ -159,6 +159,36 @@ const linePlaceholders = [
             v-model.number="titleStore.lineGap"
             min="0"
             max="200"
+            class="w-full max-w-[140px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            @change="titleStore.clearImage()"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            横向拉伸
+            <span class="text-xs font-normal text-gray-400">1.0 为原始宽窄</span>
+          </label>
+          <input
+            type="number"
+            v-model.number="titleStore.scaleX"
+            min="0.3"
+            max="3"
+            step="0.1"
+            class="w-full max-w-[140px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            @change="titleStore.clearImage()"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            纵向拉伸
+            <span class="text-xs font-normal text-gray-400">1.0 为原始高矮</span>
+          </label>
+          <input
+            type="number"
+            v-model.number="titleStore.scaleY"
+            min="0.3"
+            max="3"
+            step="0.1"
             class="w-full max-w-[140px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
             @change="titleStore.clearImage()"
           />

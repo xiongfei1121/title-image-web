@@ -19,8 +19,10 @@ export const useTitleStore = defineStore('title', {
       { text: '', fontSize: undefined, font: 'hei' as FontType, checked: true },
       { text: '', fontSize: undefined, font: 'hei' as FontType, checked: false },
     ] as LineConfig[],
-    width: 1453,
+width: 1453,
     lineGap: 15,
+    scaleX: 1,
+    scaleY: 1,
     textColor: [42, 76, 140] as [number, number, number],
     bgColor: [255, 255, 255] as [number, number, number],
     format: 'url' as 'url' | 'base64' | 'image',
@@ -90,6 +92,18 @@ export const useTitleStore = defineStore('title', {
       this.generatedFontSizes = null
     },
     
+    setScaleX(scaleX: number) {
+      this.scaleX = scaleX
+      this.generatedImage = null
+      this.generatedFontSizes = null
+    },
+    
+    setScaleY(scaleY: number) {
+      this.scaleY = scaleY
+      this.generatedImage = null
+      this.generatedFontSizes = null
+    },
+    
     setTextColor(color: [number, number, number]) {
       this.textColor = color
       this.generatedImage = null
@@ -151,8 +165,10 @@ export const useTitleStore = defineStore('title', {
             text_color: this.textColor,
             bg_color: this.bgColor,
             format: 'url',
-            custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
+custom_sizes: Object.keys(customSizes).length > 0 ? customSizes : null,
             line_gap: this.lineGap,
+            scale_x: this.scaleX,
+            scale_y: this.scaleY,
           }),
         })
         
@@ -189,8 +205,10 @@ export const useTitleStore = defineStore('title', {
         { text: '', fontSize: undefined, font: 'hei', checked: true },
         { text: '', fontSize: undefined, font: 'hei', checked: false },
       ]
-      this.width = 1453
+this.width = 1453
       this.lineGap = 15
+      this.scaleX = 1
+      this.scaleY = 1
       this.textColor = [42, 76, 140]
       this.bgColor = [255, 255, 255]
       this.generatedImage = null
@@ -200,6 +218,6 @@ export const useTitleStore = defineStore('title', {
   },
   
   persist: {
-    pick: ['width', 'lineGap', 'textColor', 'bgColor', 'appTheme', 'lines'],
+    pick: ['width', 'lineGap', 'scaleX', 'scaleY', 'textColor', 'bgColor', 'appTheme', 'lines'],
   },
 })
